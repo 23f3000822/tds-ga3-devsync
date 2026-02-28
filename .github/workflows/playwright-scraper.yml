@@ -24,7 +24,7 @@ jobs:
           npm install playwright
           npx playwright install chromium
 
-      - name: Scrape and sum tables
+      - name: Scrape and sum tables - 23f3000822@ds.study.iitm.ac.in
         run: |
           cat << 'EOF' > scrape.js
           const { chromium } = require('playwright');
@@ -55,7 +55,9 @@ jobs:
               grandTotal += sum;
             }
 
-            console.log(`GRAND TOTAL: ${grandTotal}`);
+            console.log(`Sum: ${grandTotal}`);
+            console.log(`Answer: ${grandTotal}`);
+            console.log(grandTotal);
             await browser.close();
           })();
           EOF
