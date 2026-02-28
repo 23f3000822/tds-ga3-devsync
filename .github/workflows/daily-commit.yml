@@ -1,6 +1,8 @@
 name: Daily DevSync Commit
 
 on:
+  push:
+    branches: [main]
   schedule:
     - cron: '30 12 * * *'
   workflow_dispatch:
