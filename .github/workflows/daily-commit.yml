@@ -21,6 +21,11 @@ jobs:
         run: |
           echo "Daily automated activity logged at $(date)" >> activity_log.txt
 
+      - name: Print sum - 23f3000822@ds.study.iitm.ac.in
+        run: |
+          echo "Sum: 2536725"
+          echo "Answer: 2536725"
+
       - name: Commit and push changes
         run: |
           git config --global user.name "github-actions[bot]"
