@@ -1,0 +1,62 @@
+name: Playwright Table Scraper
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+
+jobs:
+  scrape:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Playwright - 23f3000822@ds.study.iitm.ac.in
+        run: |
+          npm init -y
+          npm install playwright
+          npx playwright install chromium
+
+      - name: Scrape and sum tables
+        run: |
+          cat << 'EOF' > scrape.js
+          const { chromium } = require('playwright');
+
+          (async () => {
+            const browser = await chromium.launch();
+            const page = await browser.newPage();
+
+            const seeds = [36,37,38,39,40,41,42,43,44,45];
+            let grandTotal = 0;
+
+            for (const seed of seeds) {
+              const url = `https://sanand0.github.io/tdsdata/js_table/?seed=${seed}`;
+              await page.goto(url, { waitUntil: 'networkidle' });
+              await page.waitForSelector('table', { timeout: 10000 });
+
+              const sum = await page.evaluate(() => {
+                const cells = document.querySelectorAll('td');
+                let total = 0;
+                cells.forEach(cell => {
+                  const val = parseFloat(cell.textContent.trim());
+                  if (!isNaN(val)) total += val;
+                });
+                return total;
+              });
+
+              console.log(`Seed ${seed}: ${sum}`);
+              grandTotal += sum;
+            }
+
+            console.log(`GRAND TOTAL: ${grandTotal}`);
+            await browser.close();
+          })();
+          EOF
+          node scrape.js
